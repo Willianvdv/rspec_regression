@@ -14,38 +14,45 @@ module RspecRegression
   class QueryRegressor
     attr :sqls, :examples
 
-    def initialize
-      @sqls = []
-      @examples = {}
-    end
+    class << self
+      def regressor
+        @@regressor ||= new
+      end
 
-    def result
-      puts "\n\nIn this test I detected #{RspecRegression::QueryRegressor.regressor.sqls.count} queries"
-    end
+      def start_example(example)
+        description = example.metadata[:description]
+        regressor.start description
+      end
 
-    def store
-      File.open('/tmp/current.sqls', 'w') do |file|
-        file.write @examples.to_json
+      def end_example
+        regressor.end
       end
     end
 
-    def start_example(example_name)
+    def initialize
+      @sqls = []
+      @examples = {}
+      @subscribed_to_notifications = false
+    end
+
+    def start(example_name)
+      subscribe_to_notifications unless @subscribed_to_notifications
       @current_example = { name: example_name, sqls: [] }
     end
 
-    def end_example
-      @examples[@current_example[:name]] = @current_example[:sqls]
+    def end
+      @current_example = nil
     end
 
     def add_sql(sql)
       @current_example[:sqls] << RspecRegression.Sql.new(sql) unless @current_example.nil?
     end
 
-    def run
-      ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
-        self.class.regressor.add_sql data[:sql]
-      end
-    end
+    # def store_results
+    #   File.open('/tmp/current.sqls', 'w') do |file|
+    #     file.write @examples.to_json
+    #   end
+    # end
 
     def results
       previous_results = JSON.load File.open('/tmp/latest.sqls')
@@ -58,32 +65,14 @@ module RspecRegression
       end
     end
 
-    # CLASS METHOD STUFF
+    private
 
-    def self.regressor
-      @@regressor ||= new
-    end
+    def subscribe_to_notifications
+      ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
+        self.class.regressor.add_sql data[:sql]
+      end
 
-    def self.start
-      FileUtils.mv '/tmp/current.sqls', '/tmp/latest.sqls', force: true if File.file? '/tmp/current.sqls'
-      regressor.run
-    end
-
-    def self.end
-      regressor.store
-      regressor.results
-      # regressor.result
-      # regressor.regression
-
-    end
-
-    def self.start_example(example)
-      description = example.metadata[:description]
-      regressor.start_example description
-    end
-
-    def self.end_example(example)
-      regressor.end_example
+      @subscribed_to_notifications = true
     end
   end
 end
