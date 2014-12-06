@@ -70,7 +70,7 @@ module RspecRegression
       end
 
       def results
-        regressor.results
+        regressor.store
       end
     end
 
@@ -94,17 +94,8 @@ module RspecRegression
       @current_example[:sqls] << RspecRegression::Sql.new(sql).clean unless @current_example.nil?
     end
 
-    def results
-      ap @examples
-      # previous_results = JSON.load File.open('/tmp/latest.sqls')
-      #
-      # puts "\n\n\nRegression results:"
-      #
-      # @examples.each do |name, sqls|
-      #   previous_sqls = previous_results[name]
-      #   puts "  - #{name}: \033[1m#{sqls.count}\033[0m / #{previous_sqls.try(:count)}"
-      # end
-
+    def store
+      File.open('tmp/sql_regression.sqls', 'w') { |file| file.write JSON.pretty_generate(@examples) }
     end
 
     private
