@@ -1,5 +1,4 @@
 require 'diffy'
-require 'awesome_print'
 require 'active_support'
 require "rspec_regression/version"
 
