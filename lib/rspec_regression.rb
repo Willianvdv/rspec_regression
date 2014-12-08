@@ -1,4 +1,4 @@
-require 'diffy'
+require 'hirb'
 require 'active_support'
 require "rspec_regression/version"
 
@@ -68,8 +68,9 @@ module RspecRegression
         regressor.end
       end
 
-      def results
-        regressor.store
+      def end
+        regressor.store if ENV['REGRESSION_STORE_RESULTS']
+        regressor.analyse
       end
     end
 
@@ -97,14 +98,44 @@ module RspecRegression
       File.open('tmp/sql_regression.sqls', 'w') { |file| file.write JSON.pretty_generate(@examples) }
     end
 
+    def analyse
+      too_many_queries
+
+    end
+
     private
+
+    def too_many_queries
+      sql_threshold = (ENV['REGRESSION_QUERY_THRESHOLD'] || 100).to_i
+      examples_with_a_lot_of_queries = @examples.keep_if { |example| example[:sqls].count > sql_threshold }
+      return unless examples_with_a_lot_of_queries
+
+      examples_with_a_lot_of_queries.sort! { |x, y| x[:sqls].count <=> y[:sqls].count }
+      x = examples_with_a_lot_of_queries.map { |x| { number: x[:sqls].count, location: x[:location] } }
+
+      puts "\nExamples with more than #{sql_threshold} queries:"
+      puts Hirb::Helpers::AutoTable.render(x)
+    end
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
-        self.class.regressor.add_sql data[:sql]
+        RspecRegression::QueryRegressor.regressor.add_sql data[:sql]
       end
 
       @subscribed_to_notifications = true
     end
   end
+
+  # class Analyser
+  #   def analyse
+  #     @results_json = File.open('tmp/sql_regression.sqls', 'r').read
+  #     @results = JSON.parse @results_json
+  #
+  #     @results.each do |example|
+  #       p example['name'] if example['sqls'].count > 100
+  #     end
+  #
+  #     nil
+  #   end
+  # end
 end
