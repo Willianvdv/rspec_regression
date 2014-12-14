@@ -52,7 +52,7 @@ module RspecRegression
   end
 
   class QueryRegressor
-    attr :sqls, :examples
+    attr :current_example, :sqls, :examples
 
     class << self
       def regressor
@@ -95,27 +95,29 @@ module RspecRegression
     end
 
     def store
-      File.open('tmp/sql_regression.sqls', 'w') { |file| file.write JSON.pretty_generate(@examples) }
+      File.open('tmp/sql_regression.sqls', 'w') do |file|
+        file.write JSON.pretty_generate(@examples)
+      end
     end
 
-    def analyse
-      too_many_queries
-
-    end
+    # def analyse
+    #   too_many_queries
+    #
+    # end
 
     private
 
-    def too_many_queries
-      sql_threshold = (ENV['REGRESSION_QUERY_THRESHOLD'] || 100).to_i
-      examples_with_a_lot_of_queries = @examples.keep_if { |example| example[:sqls].count > sql_threshold }
-      return unless examples_with_a_lot_of_queries
-
-      examples_with_a_lot_of_queries.sort! { |x, y| x[:sqls].count <=> y[:sqls].count }
-      x = examples_with_a_lot_of_queries.map { |x| { number: x[:sqls].count, location: x[:location] } }
-
-      puts "\nExamples with more than #{sql_threshold} queries:"
-      puts Hirb::Helpers::AutoTable.render(x)
-    end
+    # def too_many_queries
+    #   sql_threshold = (ENV['REGRESSION_QUERY_THRESHOLD'] || 100).to_i
+    #   examples_with_a_lot_of_queries = @examples.keep_if { |example| example[:sqls].count > sql_threshold }
+    #   return unless examples_with_a_lot_of_queries
+    #
+    #   examples_with_a_lot_of_queries.sort! { |x, y| x[:sqls].count <=> y[:sqls].count }
+    #   x = examples_with_a_lot_of_queries.map { |x| { number: x[:sqls].count, location: x[:location] } }
+    #
+    #   puts "\nExamples with more than #{sql_threshold} queries:"
+    #   puts Hirb::Helpers::AutoTable.render(x)
+    # end
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
@@ -126,16 +128,38 @@ module RspecRegression
     end
   end
 
-  # class Analyser
-  #   def analyse
-  #     @results_json = File.open('tmp/sql_regression.sqls', 'r').read
-  #     @results = JSON.parse @results_json
-  #
-  #     @results.each do |example|
-  #       p example['name'] if example['sqls'].count > 100
-  #     end
-  #
-  #     nil
-  #   end
-  # end
+  class Analyser
+    def initialize(previous_results, current_results)
+      @current_results = current_results
+      @previous_results = to_hash_with_name_as_key(previous_results)
+    end
+
+    def diff
+      [].tap do |d|
+        @current_results.each do |current_example|
+          previous_example = @previous_results[current_example['name']]
+
+          if (sqls_diff = diff_in_example previous_example, current_example)
+            d << current_example.merge({'sqls' => sqls_diff })
+          end
+        end
+      end
+    end
+
+    private
+
+    def diff_in_example(previous_example, current_example)
+      current_sqls = current_example['sqls']
+      previous_sqls = @previous_results[current_example['name']]['sqls']
+
+      plus = current_sqls - previous_sqls
+      minus = previous_sqls - current_sqls
+
+      { 'plus' => plus, 'minus' => minus } if plus.any? || minus.any?
+    end
+
+    def to_hash_with_name_as_key(results)
+      Hash[results.map { |example| [example['name'], example] } ]
+    end
+  end
 end
