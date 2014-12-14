@@ -1,6 +1,9 @@
 require 'hirb'
+require 'awesome_print'
 require 'active_support'
 require "rspec_regression/version"
+
+# TODO: Fix the inconsistend use of :sqls and 'sqls'
 
 module RspecRegression
 
@@ -98,6 +101,22 @@ module RspecRegression
       File.open('tmp/sql_regression.sqls', 'w') do |file|
         file.write JSON.pretty_generate(@examples)
       end
+      p "FILE WRITEN!"
+    end
+
+    def analyse
+      unless File.file? 'tmp/sql_regression.sqls'
+        fail 'Regression analyse error: `tmp/sql_regression.sqls` could not be found!'
+        return
+      end
+
+      previous_results_data = File.open('tmp/sql_regression.sqls', 'r')
+      previous_results = JSON.parse previous_results_data.read
+
+      analyser = Analyser.new previous_results, @examples
+
+      ap analyser.diff_per_example
+
     end
 
     private
@@ -117,13 +136,13 @@ module RspecRegression
       @previous_results = to_hash_with_name_as_key(previous_results)
     end
 
-    def diff
+    def diff_per_example
       [].tap do |d|
         @current_results.each do |current_example|
-          previous_example = @previous_results[current_example['name']]
+          previous_example = @previous_results.fetch current_example[:name], {}
 
           if (sqls_diff = diff_in_example previous_example, current_example)
-            d << current_example.merge({'sqls' => sqls_diff })
+            d << current_example.merge({ sqls: sqls_diff })
           end
         end
       end
@@ -132,13 +151,19 @@ module RspecRegression
     private
 
     def diff_in_example(previous_example, current_example)
-      current_sqls = current_example['sqls']
-      previous_sqls = @previous_results[current_example['name']]['sqls']
+      current_sqls = current_example[:sqls]
+      previous_sqls = previous_example.fetch 'sqls', []
 
       plus = current_sqls - previous_sqls
       minus = previous_sqls - current_sqls
 
-      { 'plus' => plus, 'minus' => minus } if plus.any? || minus.any?
+      number_of_differences = (current_sqls.size - previous_sqls.size).abs
+
+      if plus.any? || minus.any?
+        { 'meta' => { 'number_of_differences' => number_of_differences },
+          'plus' => plus,
+          'minus' => minus }
+      end
     end
 
     def to_hash_with_name_as_key(results)
