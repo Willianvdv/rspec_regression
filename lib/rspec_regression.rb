@@ -100,24 +100,7 @@ module RspecRegression
       end
     end
 
-    # def analyse
-    #   too_many_queries
-    #
-    # end
-
     private
-
-    # def too_many_queries
-    #   sql_threshold = (ENV['REGRESSION_QUERY_THRESHOLD'] || 100).to_i
-    #   examples_with_a_lot_of_queries = @examples.keep_if { |example| example[:sqls].count > sql_threshold }
-    #   return unless examples_with_a_lot_of_queries
-    #
-    #   examples_with_a_lot_of_queries.sort! { |x, y| x[:sqls].count <=> y[:sqls].count }
-    #   x = examples_with_a_lot_of_queries.map { |x| { number: x[:sqls].count, location: x[:location] } }
-    #
-    #   puts "\nExamples with more than #{sql_threshold} queries:"
-    #   puts Hirb::Helpers::AutoTable.render(x)
-    # end
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
