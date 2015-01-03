@@ -11,7 +11,7 @@ dummy application it looks like:
 $ REGRESSION_STORE_RESULTS=1 AMOUNT_OF_PEOPLES_TO_CREATE=10 bundle exec rspec
 ```
 
-To see a decreased query count, runthe dummy application with less `AMOUNT_OF_PEOPLES_TO_CREATE`.
+To see a decreased query count, run the dummy application with less `AMOUNT_OF_PEOPLES_TO_CREATE`.
 ```
 $ AMOUNT_OF_PEOPLES_TO_CREATE=5 bundle exec rspec
 > Query regression: Number of queries is decreased!
