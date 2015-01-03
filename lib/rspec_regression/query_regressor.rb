@@ -58,7 +58,6 @@ module RspecRegression
       previous_results = JSON.parse previous_results_data.read
 
       analyser = Analyser.new previous_results, @examples
-
       difference_in_number_of_queries = analyser.difference_in_number_of_queries
 
       output, status = if difference_in_number_of_queries == 0
