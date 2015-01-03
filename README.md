@@ -2,9 +2,53 @@
 
 wip
 
-## Usage
+## Example
+In `dummy/` you find a example application. Don't forget to bundle!
+
+To record a base line pass `REGRESSION_STORE_RESULTS=1` as env variable when running `rspec`. For the
+dummy application it looks like:
 
 ```
+REGRESSION_STORE_RESULTS=1 AMOUNT_OF_PEOPLES_TO_CREATE=10 bundle exec rspec
+```
+
+To see a decreased query count, runthe dummy application with less `AMOUNT_OF_PEOPLES_TO_CREATE`.
+```
+AMOUNT_OF_PEOPLES_TO_CREATE=5 bundle exec rspec
+```
+
+You should see:
+
+```
+Query regression: Number of queries is decreased!
+```
+
+To see a increased query count, run the dummy application with more `AMOUNT_OF_PEOPLES_TO_CREATE`.
+
+```
+AMOUNT_OF_PEOPLES_TO_CREATE=15 bundle exec rspec
+```
+You should see:
+```
+Query regression: Number of queries is increased!
+```
+
+
+## In your own rspec suite
+
+Install this gem:
+```
+gem 'rspec_regression', github: 'willianvdv/rspec_regression'
+```
+In your `spec_helper.rb`
+
+```
+config.before :suite do
+  # This is a temporary solution until I find a better way to hot start specs (with table information
+  # already fetched)
+  ActiveRecord::Base.descendants.last.first
+end
+
 config.before :each do |example|
   RspecRegression::QueryRegressor.start_example example
 end
@@ -16,11 +60,4 @@ end
 config.after :suite do
   RspecRegression::QueryRegressor.end
 end
-```
-
-## Diffs
-
-Without created_at and updated_at timestamps
-```
-diff <(cat /tmp/latest.sqls | sed "s/\"updated_at\" = '.*'/\"updated_at = <UPDATE_AT_TIMESTAMP>/g" | sed "s/\"updated_at\" = '.*'/\"created_at = <CREATED_AT_TIMESTAMP>/g") <(cat /tmp/current.sqls | sed "s/\"updated_at\" = '.*'/\"updated_at = <UPDATE_AT_TIMESTAMP>/g" | sed "s/\"updated_at\" = '.*'/\"created_at = <CREATED_AT_TIMESTAMP>/g")
 ```
