@@ -1,0 +1,49 @@
+[
+  {
+    "name": "person_has_all_the_peoples",
+    "location": "./spec/models/person_spec.rb:6",
+    "sqls": [
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SELECT \"people\".* FROM \"people\""
+    ]
+  },
+  {
+    "name": "person_with_variable_peoples_to_create_creates_some_more_peoples",
+    "location": "./spec/models/person_spec.rb:13",
+    "sqls": [
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SAVEPOINT active_record_1",
+      "INSERT INTO \"people\" (\"name\", \"created_at\", \"updated_at\") VALUES (?, ?, ?)",
+      "RELEASE SAVEPOINT active_record_1",
+      "SELECT COUNT(*) FROM \"people\""
+    ]
+  }
+]

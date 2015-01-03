@@ -46,12 +46,11 @@ module RspecRegression
       File.open('tmp/sql_regression.sqls', 'w') do |file|
         file.write JSON.pretty_generate(@examples)
       end
-      p "FILE WRITEN!"
     end
 
     def analyse
       unless File.file? 'tmp/sql_regression.sqls'
-        fail 'Regression analyse error: `tmp/sql_regression.sqls` could not be found!'
+        puts 'Regression analyse error: `tmp/sql_regression.sqls` could not be found!'
         return
       end
 
@@ -59,8 +58,6 @@ module RspecRegression
       previous_results = JSON.parse previous_results_data.read
 
       analyser = Analyser.new previous_results, @examples
-
-      ap analyser.diff_per_example
 
       difference_in_number_of_queries = analyser.difference_in_number_of_queries
 
@@ -73,7 +70,6 @@ module RspecRegression
       end
 
       puts "\nQuery regression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
-
     end
 
     private

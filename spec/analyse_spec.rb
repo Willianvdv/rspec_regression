@@ -75,7 +75,5 @@ describe RspecRegression::Analyser do
         expect(subject.diff_per_example).to eq(expected_diff)
       end
     end
-
-    # TODO: Add test when the previous example does not exists
   end
 end

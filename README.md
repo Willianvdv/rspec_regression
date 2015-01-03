@@ -14,7 +14,7 @@ config.after :each do |example|
 end
 
 config.after :suite do
-  RspecRegression::QueryRegressor.results
+  RspecRegression::QueryRegressor.end
 end
 ```
 
