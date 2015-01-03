@@ -1,6 +1,5 @@
 # RspecRegression
-
-wip
+Did your pull request introduce increased the number of queries?
 
 ## Example
 In `dummy/` you find a example application. Don't forget to bundle!
@@ -9,28 +8,20 @@ To record a base line pass `REGRESSION_STORE_RESULTS=1` as env variable when run
 dummy application it looks like:
 
 ```
-REGRESSION_STORE_RESULTS=1 AMOUNT_OF_PEOPLES_TO_CREATE=10 bundle exec rspec
+$ REGRESSION_STORE_RESULTS=1 AMOUNT_OF_PEOPLES_TO_CREATE=10 bundle exec rspec
 ```
 
 To see a decreased query count, runthe dummy application with less `AMOUNT_OF_PEOPLES_TO_CREATE`.
 ```
-AMOUNT_OF_PEOPLES_TO_CREATE=5 bundle exec rspec
-```
-
-You should see:
-
-```
-Query regression: Number of queries is decreased!
+$ AMOUNT_OF_PEOPLES_TO_CREATE=5 bundle exec rspec
+> Query regression: Number of queries is decreased!
 ```
 
 To see a increased query count, run the dummy application with more `AMOUNT_OF_PEOPLES_TO_CREATE`.
 
 ```
-AMOUNT_OF_PEOPLES_TO_CREATE=15 bundle exec rspec
-```
-You should see:
-```
-Query regression: Number of queries is increased!
+$ AMOUNT_OF_PEOPLES_TO_CREATE=15 bundle exec rspec
+> Query regression: Number of queries is increased!
 ```
 
 
