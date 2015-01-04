@@ -68,7 +68,16 @@ module RspecRegression
         ['Number of queries is decreased!', :failure]
       end
 
-      puts "\nQuery regression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
+      puts "\n\n"
+      puts '-----------------'
+      puts 'Query regression'
+      puts '-----------------'
+      puts "\nRegression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
+
+
+
+
+
     end
 
     private
