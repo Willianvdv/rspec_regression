@@ -9,28 +9,30 @@ module RspecRegression
     end
 
     def difference_in_number_of_queries
-      current_number_of_queries = (@current_results.map { |example| example[:sqls].size }).inject :'+'
-      previous_number_of_queries = (@previous_results.map { |example| example['sqls'].size }).inject :'+'
-
-      current_number_of_queries - previous_number_of_queries
+      sql_count(@current_results) - sql_count(@previous_results)
     end
 
     def diff_per_example
-      [].tap do |d|
-        @current_results.each do |current_example|
-          previous_example = @previous_results_as_hash.fetch current_example[:name], {}
-          if (sqls_diff = diff_in_example previous_example, current_example)
-            d << current_example.merge({ sqls: sqls_diff })
-          end
-        end
+      @current_results.map do |current_result|
+        previous_result = previous_result_by_name current_result[:name]
+        diff = { sqls: diff_in_example(previous_result, current_result) }
+        current_result.merge(diff)
       end
     end
 
     private
 
-    def diff_in_example(previous_example, current_example)
-      current_sqls = current_example[:sqls]
-      previous_sqls = previous_example.fetch 'sqls', []
+    def sql_count(results)
+      (results.map { |r| (r[:sqls] || r['sqls']).size }).inject :'+'
+    end
+
+    def previous_result_by_name(name)
+      @previous_results_as_hash.fetch name, {}
+    end
+
+    def diff_in_example(previous_results, current_results)
+      current_sqls = current_results[:sqls]
+      previous_sqls = previous_results.fetch 'sqls', []
       diff = Diff::LCS.diff(previous_sqls, current_sqls)[0]
       { meta: { number_of_differences: (diff.nil? ? 0 : diff.size) }, diff: diff }
     end
