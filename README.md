@@ -27,8 +27,15 @@ $ AMOUNT_OF_PEOPLES_TO_CREATE=9 bundle exec rspec
 To see a increased query count, run the dummy application with more `AMOUNT_OF_PEOPLES_TO_CREATE`.
 
 ```
-$ AMOUNT_OF_PEOPLES_TO_CREATE=15 bundle exec rspec
-> Query regression: Number of queries is increased!
+$ AMOUNT_OF_PEOPLES_TO_CREATE=11 bundle exec rspec
+> -----------------
+> Query regression
+> -----------------
+> Regression: Number of queries is increased!
+> person_with_variable_peoples_to_create_creates_some_more_peoples (./spec/models/person_spec.rb:13)
+> - #30: + SAVEPOINT active_record_1
+> - #31: + INSERT INTO "people" ("name", "created_at", "updated_at") VALUES (?, ?, ?)
+> - #32: + RELEASE SAVEPOINT active_record_1
 ```
 
 
