@@ -1,5 +1,5 @@
 # RspecRegression
-Did your pull request introduce increased the number of queries?
+Did your pull request increased the number of queries?
 
 ## Example
 In `dummy/` you find a example application. Don't forget to bundle!
