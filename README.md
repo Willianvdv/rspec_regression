@@ -13,8 +13,15 @@ $ REGRESSION_STORE_RESULTS=1 AMOUNT_OF_PEOPLES_TO_CREATE=10 bundle exec rspec
 
 To see a decreased query count, runthe dummy application with less `AMOUNT_OF_PEOPLES_TO_CREATE`.
 ```
-$ AMOUNT_OF_PEOPLES_TO_CREATE=5 bundle exec rspec
-> Query regression: Number of queries is decreased!
+$ AMOUNT_OF_PEOPLES_TO_CREATE=9 bundle exec rspec
+> -----------------
+> Query regression
+> -----------------
+> Regression: Number of queries is decreased!
+> person_with_variable_peoples_to_create_creates_some_more_peoples (./spec/models/person_spec.rb:13)
+> - #27: - SAVEPOINT active_record_1
+> - #28: - INSERT INTO "people" ("name", "created_at", "updated_at") VALUES (?, ?, ?)
+> - #29: - RELEASE SAVEPOINT active_record_1
 ```
 
 To see a increased query count, run the dummy application with more `AMOUNT_OF_PEOPLES_TO_CREATE`.
