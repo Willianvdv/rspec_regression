@@ -72,15 +72,28 @@ module RspecRegression
       puts '-----------------'
       puts 'Query regression'
       puts '-----------------'
-      puts "\nRegression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
+      puts "Regression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
 
-
-
-
-
+      analyser.diff_per_example.each do |example|
+        next unless (sqls_diff = example[:sqls][:diff])
+        puts " #{example[:name]} (#{example[:location]})"
+        sqls_diff.each do |sql_diff|
+          operator, line, query = sql_diff.to_a
+          operator_in_color = operator == '+' ? red(operator) : green(operator)
+          puts "  - \##{line}: #{operator_in_color} #{query}"
+        end
+      end
     end
 
     private
+
+    def green(str)
+      RSpec::Core::Formatters::ConsoleCodes.wrap(str, :success)
+    end
+
+    def red(str)
+      RSpec::Core::Formatters::ConsoleCodes.wrap(str, :failure)
+    end
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
