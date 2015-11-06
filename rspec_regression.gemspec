@@ -8,8 +8,8 @@ Gem::Specification.new do |spec|
   spec.version       = RspecRegression::VERSION
   spec.authors       = ["Willian van der Velde"]
   spec.email         = ["mail@willian.io"]
-  spec.summary       = %q{TODO: Write a short summary. Required.}
-  spec.description   = %q{TODO: Write a longer description. Optional.}
+  spec.summary       = %q{Keeps track of query regressions}
+  spec.description   = %q{Keeps track of query regressions}
   spec.homepage      = ""
   spec.license       = "MIT"
 
@@ -19,6 +19,7 @@ Gem::Specification.new do |spec|
   spec.require_paths = ["lib"]
 
   spec.add_dependency 'httparty'
+  spec.add_dependency 'awesome_print'
 
   spec.add_development_dependency 'rspec'
   spec.add_development_dependency 'vcr'

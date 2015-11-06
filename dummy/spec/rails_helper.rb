@@ -40,7 +40,7 @@ RSpec.configure do |config|
   end
 
   config.after :suite do
-    RspecRegression::QueryRegressor.end
+    RspecRegression::QueryRegressor.store_and_analyse
   end
 
   # Remove this line if you're not using ActiveRecord or ActiveRecord fixtures
