@@ -15,6 +15,7 @@ describe RspecRegression::QueryRegressor do
 
   subject!(:regressor) do
     described_class.start_example @_example
+    fake_a_notification
     described_class.regressor
   end
 
@@ -25,7 +26,6 @@ describe RspecRegression::QueryRegressor do
 
   describe 'ending a example' do
     before do
-      fake_a_notification
       regressor.end
     end
 
@@ -41,7 +41,6 @@ describe RspecRegression::QueryRegressor do
   describe 'end the suite' do
     it 'stores all the examples' do
       VCR.use_cassette('regressor_storage') do
-        fake_a_notification
         regressor.end
         regressor.store
       end
