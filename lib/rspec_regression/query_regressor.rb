@@ -1,3 +1,6 @@
+require 'json'
+require 'httparty'
+
 module RspecRegression
   class QueryRegressor
     attr :current_example, :examples
@@ -25,26 +28,52 @@ module RspecRegression
 
     def start(example_name, example_location)
       subscribe_to_notifications unless @subscribed_to_notifications
-      @current_example = { name: example_name, location: example_location, sqls: [] }
+      @current_example = { example_name: example_name, example_location: example_location, queries: [] }
     end
 
     def end
-      examples << current_example.dup
+      examples << current_example
       @current_example = nil
     end
 
-    def add_sql(sql)
-      current_example[:sqls] << RspecRegression::Sql.new(sql).clean unless current_example.nil?
+    def store
+      RegressorStore.new(examples).store
+    end
+
+    def add_query(query)
+      current_example[:queries] << RspecRegression::Sql.new(query).clean unless current_example.nil?
     end
 
     private
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
-        RspecRegression::QueryRegressor.regressor.add_sql data[:sql]
+        RspecRegression::QueryRegressor.regressor.add_query data[:sql]
       end
 
       @subscribed_to_notifications = true
+    end
+  end
+
+  class RegressorStore
+    def initialize(examples)
+      @examples = examples
+    end
+
+    def store
+      HTTParty.post regressor_url, body: { result_data: examples }
+    end
+
+    private
+
+    attr_reader :examples
+
+    def regressor_domain
+      ENV['REGRESSOR_DOMAIN']
+    end
+
+    def regressor_url
+      "#{regressor_domain}/results"
     end
   end
 end

@@ -18,11 +18,11 @@ Gem::Specification.new do |spec|
   spec.test_files    = spec.files.grep(%r{^(test|spec|features)/})
   spec.require_paths = ["lib"]
 
-  spec.add_dependency 'diffy'
-  spec.add_dependency 'awesome_print'
-  spec.add_dependency 'diff-lcs', '~> 1.2.5'
+  spec.add_dependency 'httparty'
 
   spec.add_development_dependency 'rspec'
+  spec.add_development_dependency 'vcr'
+  spec.add_development_dependency 'webmock'
   spec.add_development_dependency 'rspec-rails'
   spec.add_development_dependency 'rails'
 

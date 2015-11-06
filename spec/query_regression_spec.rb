@@ -7,6 +7,12 @@ describe RspecRegression::QueryRegressor do
     @_example = example # cheat
   end
 
+  let(:fake_query) { 'select * from regressions' }
+
+  def fake_a_notification
+    ActiveSupport::Notifications.instrument('sql.active_record', sql: fake_query) do; end
+  end
+
   subject!(:regressor) do
     described_class.start_example @_example
     described_class.regressor
@@ -14,21 +20,31 @@ describe RspecRegression::QueryRegressor do
 
   it 'current example name is the name of this spec' do
     expected_name = 'rspecregression_queryregressor_current_example_name_is_the_name_of_this_spec'
-    expect(regressor.current_example[:name]).to eq expected_name
+    expect(regressor.current_example[:example_name]).to eq expected_name
   end
 
   describe 'ending a example' do
-    it 'stores the results recorded in this example' do
-      fake_query = 'select * from regressions'
-      ActiveSupport::Notifications.instrument('sql.active_record', sql: fake_query) do; end
-
+    before do
+      fake_a_notification
       regressor.end
-      expect(regressor.examples.last[:sqls]).to eq [fake_query]
+    end
+
+    it 'stores the results recorded in this example' do
+      expect(regressor.examples.last[:queries]).to eq [fake_query]
     end
 
     it 'resets the example' do
-      regressor.end
       expect(regressor.current_example).to be_nil
+    end
+  end
+
+  describe 'end the suite' do
+    it 'stores all the examples' do
+      VCR.use_cassette('regressor_storage') do
+        fake_a_notification
+        regressor.end
+        regressor.store
+      end
     end
   end
 end
