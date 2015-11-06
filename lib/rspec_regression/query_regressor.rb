@@ -1,10 +1,10 @@
 module RspecRegression
   class QueryRegressor
-    attr :current_example, :sqls, :examples
+    attr :current_example, :examples
 
     class << self
       def regressor
-        @@regressor ||= new
+        @regressor ||= new
       end
 
       def start_example(example)
@@ -14,11 +14,6 @@ module RspecRegression
 
       def end_example
         regressor.end
-      end
-
-      def end
-        regressor.store if ENV['REGRESSION_STORE_RESULTS']
-        regressor.analyse
       end
     end
 
@@ -34,66 +29,15 @@ module RspecRegression
     end
 
     def end
-      @examples << @current_example
+      examples << current_example.dup
       @current_example = nil
     end
 
     def add_sql(sql)
-      @current_example[:sqls] << RspecRegression::Sql.new(sql).clean unless @current_example.nil?
-    end
-
-    def store
-      File.open('tmp/sql_regression.sqls', 'w') do |file|
-        file.write JSON.pretty_generate(@examples)
-      end
-    end
-
-    def analyse
-      unless File.file? 'tmp/sql_regression.sqls'
-        puts 'Regression analyse error: `tmp/sql_regression.sqls` could not be found!'
-        return
-      end
-
-      previous_results_data = File.open('tmp/sql_regression.sqls', 'r')
-      previous_results = JSON.parse previous_results_data.read
-
-      analyser = Analyser.new previous_results, @examples
-      difference_in_number_of_queries = analyser.difference_in_number_of_queries
-
-      output, status = if difference_in_number_of_queries == 0
-        ['Number of queries is stable!', :success]
-      elsif difference_in_number_of_queries > 0
-        ['Number of queries is increased!', :failure]
-      elsif difference_in_number_of_queries < 0
-        ['Number of queries is decreased!', :failure]
-      end
-
-      puts "\n\n"
-      puts '-----------------'
-      puts 'Query regression'
-      puts '-----------------'
-      puts "Regression: #{RSpec::Core::Formatters::ConsoleCodes.wrap(output, status)}"
-
-      analyser.diff_per_example.each do |example|
-        next unless (sqls_diff = example[:sqls][:diff])
-        puts " #{example[:name]} (#{example[:location]})"
-        sqls_diff.each do |sql_diff|
-          operator, line, query = sql_diff.to_a
-          operator_in_color = operator == '+' ? red(operator) : green(operator)
-          puts "  - \##{line}: #{operator_in_color} #{query}"
-        end
-      end
+      current_example[:sqls] << RspecRegression::Sql.new(sql).clean unless current_example.nil?
     end
 
     private
-
-    def green(str)
-      RSpec::Core::Formatters::ConsoleCodes.wrap(str, :success)
-    end
-
-    def red(str)
-      RSpec::Core::Formatters::ConsoleCodes.wrap(str, :failure)
-    end
 
     def subscribe_to_notifications
       ActiveSupport::Notifications.subscribe "sql.active_record" do |name, started, finished, unique_id, data|
