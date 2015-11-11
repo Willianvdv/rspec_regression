@@ -30,7 +30,8 @@ RSpec.configure do |config|
   # assertions if you prefer.
   #
   config.before :suite do
-    ENV['REGRESSOR_DOMAIN'] = 'http://localhost:3000' unless ENV['REGRESSOR_DOMAIN']
+    ENV['REGRESSOR_DOMAIN'] = 'http://localhost:3000'
+    ENV['REGRESSOR_PROJECT_ID'] = '30d8fb2c-1de2-49e2-9b4a-f7e2bbf98a27'
   end
 
   config.expect_with :rspec do |expectations|

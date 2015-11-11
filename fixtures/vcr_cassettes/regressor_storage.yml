@@ -2,7 +2,7 @@
 http_interactions:
 - request:
     method: post
-    uri: http://localhost:3000/results
+    uri: http://localhost:3000/results?project_id=30d8fb2c-1de2-49e2-9b4a-f7e2bbf98a27
     body:
       encoding: UTF-8
       string: result_data[][example_name]=rspecregression_queryregressor_ending_a_example_stores_the_results_recorded_in_this_example&result_data[][example_location]=.%2Fspec%2Fquery_regression_spec.rb%3A32&result_data[][queries][]=select%20%2A%20from%20regressions&result_data[][example_name]=rspecregression_queryregressor_ending_a_example_resets_the_example&result_data[][example_location]=.%2Fspec%2Fquery_regression_spec.rb%3A36&result_data[][queries][]=select%20%2A%20from%20regressions&result_data[][example_name]=rspecregression_queryregressor_end_the_suite_stores_all_the_examples&result_data[][example_location]=.%2Fspec%2Fquery_regression_spec.rb%3A42&result_data[][queries][]=select%20%2A%20from%20regressions
@@ -27,29 +27,26 @@ http_interactions:
       Content-Type:
       - application/json; charset=utf-8
       Etag:
-      - W/"74ab262ce5794bdb6f2434050c94b8b5"
+      - W/"e2412c1ffbfb6b53a82a9daf665b2c1a"
       Cache-Control:
       - max-age=0, private, must-revalidate
       X-Request-Id:
-      - 1b25824c-84e7-41cf-adb5-43dea6913316
+      - 2b168790-9bfd-4f07-899d-6e410586f947
       X-Runtime:
-      - '0.024427'
+      - '0.032972'
       Server:
       - WEBrick/1.3.1 (Ruby/2.2.2/2015-04-13)
       Date:
-      - Fri, 06 Nov 2015 14:29:45 GMT
+      - Wed, 11 Nov 2015 16:34:21 GMT
       Content-Length:
-      - '721'
+      - '14'
       Connection:
       - Keep-Alive
       Set-Cookie:
       - request_method=POST; path=/
     body:
       encoding: UTF-8
-      string: '{"results":[{"example_name":"rspecregression_queryregressor_ending_a_example_stores_the_results_recorded_in_this_example","example_location":"./spec/query_regression_spec.rb:32","queries_that_got_added":["select
-        * from regressions"],"queries_that_got_removed":[]},{"example_name":"rspecregression_queryregressor_ending_a_example_resets_the_example","example_location":"./spec/query_regression_spec.rb:36","queries_that_got_added":["select
-        * from regressions"],"queries_that_got_removed":[]},{"example_name":"rspecregression_queryregressor_end_the_suite_stores_all_the_examples","example_location":"./spec/query_regression_spec.rb:42","queries_that_got_added":["select
-        * from regressions"],"queries_that_got_removed":[]}]}'
+      string: '{"results":[]}'
     http_version: 
-  recorded_at: Fri, 06 Nov 2015 14:29:45 GMT
+  recorded_at: Wed, 11 Nov 2015 16:34:21 GMT
 recorded_with: VCR 2.9.3

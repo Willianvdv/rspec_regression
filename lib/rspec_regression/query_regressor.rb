@@ -104,11 +104,15 @@ module RspecRegression
     attr_reader :examples
 
     def regressor_domain
-      ENV['REGRESSOR_DOMAIN']
+      ENV.fetch 'REGRESSOR_DOMAIN', 'http://regressor.herokuapp.com'
+    end
+
+    def regressor_project_id
+      ENV['REGRESSOR_PROJECT_ID']
     end
 
     def regressor_url
-      "#{regressor_domain}/results"
+      "#{regressor_domain}/results?project_id=#{regressor_project_id}"
     end
   end
 end
