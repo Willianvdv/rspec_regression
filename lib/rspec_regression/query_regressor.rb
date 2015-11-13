@@ -19,8 +19,8 @@ module RspecRegression
         regressor.end
       end
 
-      def store_and_analyse
-        regressor.store_and_analyse
+      def store
+        regressor.store
       end
     end
 
