@@ -40,9 +40,8 @@ module RspecRegression
       @current_example = nil
     end
 
-    def store_and_analyse
-      results = RegressorStore.new(examples).store
-      RegressorConsoleShower.new(results).show
+    def store
+      RegressorStore.new(examples).store
     end
 
     def add_query(query)
@@ -58,36 +57,6 @@ module RspecRegression
 
       @subscribed_to_notifications = true
     end
-  end
-
-  class RegressorConsoleShower
-    def initialize(results)
-      @results = results
-    end
-
-    def show
-      require 'awesome_print'
-      puts "\n\n## THE MIGHTY REGRESSOR"
-
-      unless results['results'].empty?
-        results['results'].each do |result|
-          puts "= Regression detected in: #{result['example_name']} (#{result['example_location']})"
-          result['queries_that_got_added'].each do |query|
-            puts " (+) #{query}"
-          end
-
-          result['queries_that_got_removed'].each do |query|
-            puts " (-) #{query}"
-          end
-        end
-      else
-        print 'No regressions detected, yeeh!'
-      end
-    end
-
-    private
-
-    attr_reader :results
   end
 
   class RegressorStore
