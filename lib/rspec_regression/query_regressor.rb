@@ -40,9 +40,8 @@ module RspecRegression
       @current_example = nil
     end
 
-    def store_and_analyse
-      results = RegressorStore.new(examples).store
-      RegressorConsoleShower.new(results).show
+    def store
+      RegressorStore.new(examples).store
     end
 
     def add_query(query)
