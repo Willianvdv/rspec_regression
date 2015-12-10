@@ -95,12 +95,20 @@ module RspecRegression
     end
 
     def store
-      HTTParty.post regressor_url, body: { result_data: examples }, headers: headers
+      HTTParty.post regressor_url, body: body, headers: headers
     end
 
     private
 
     attr_reader :examples
+
+    def body
+      {
+        result_data: examples,
+        project_id: project_id,
+        tag: tag,
+      }
+    end
 
     def headers
       {
@@ -118,6 +126,14 @@ module RspecRegression
 
     def regressor_api_token
       ENV['REGRESSOR_API_TOKEN']
+    end
+
+    def project_id
+      ENV['REGRESSOR_PROJECT_ID']
+    end
+
+    def tag
+      ENV['REGRESSOR_TAG']
     end
   end
 end
