@@ -29,3 +29,13 @@ config.after :suite do
   RspecRegression::QueryRegressor.store
 end
 ```
+When running rspec:
+```
+REGRESSOR_DOMAIN='http://localhost:4000' \
+  REGRESSOR_API_TOKEN='uEeOTv0+gI8GKVtQ1M+Wxwh3TqNgkWJkYMpyLM8TFqBzO1+DJGHeqsKcUbd+dMmNYN7se6QhroQY9h/euYJLSg==' \
+  REGRESSOR_PROJECT_ID='43b1312a-aca0-4a35-8f4e-d9d6b56b279c' \
+  REGRESSOR_TAG="`git rev-parse HEAD`" \
+  bx rspec spec/
+```
+
+(REGRESSOR_TAG is optional)
