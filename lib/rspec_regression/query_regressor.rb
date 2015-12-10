@@ -104,7 +104,7 @@ module RspecRegression
 
     def headers
       {
-        'HTTP_AUTHORIZATION' => "Token token=\"#{regressor_api_token}\"",
+        'AUTHORIZATION' => "Token token=\"#{regressor_api_token}\"",
       }
     end
 
