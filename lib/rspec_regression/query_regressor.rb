@@ -19,8 +19,8 @@ module RspecRegression
         regressor.end
       end
 
-      def store_and_analyse
-        regressor.store_and_analyse
+      def store
+        regressor.store
       end
     end
 
@@ -95,12 +95,18 @@ module RspecRegression
     end
 
     def store
-      HTTParty.post regressor_url, body: { result_data: examples }
+      HTTParty.post regressor_url, body: { result_data: examples }, headers: headers
     end
 
     private
 
     attr_reader :examples
+
+    def headers
+      {
+        'HTTP_AUTHORIZATION' => "Token token=\"#{regressor_api_token}\"",
+      }
+    end
 
     def regressor_domain
       ENV['REGRESSOR_DOMAIN']
@@ -108,6 +114,10 @@ module RspecRegression
 
     def regressor_url
       "#{regressor_domain}/results"
+    end
+
+    def regressor_api_token
+      ENV['REGRESSOR_API_TOKEN']
     end
   end
 end

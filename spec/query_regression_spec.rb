@@ -42,7 +42,7 @@ describe RspecRegression::QueryRegressor do
     it 'stores all the examples' do
       VCR.use_cassette('regressor_storage') do
         regressor.end
-        regressor.store_and_analyse
+        regressor.store
       end
     end
   end
