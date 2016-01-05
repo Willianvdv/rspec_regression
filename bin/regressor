@@ -15,6 +15,10 @@ class Worker
       Possible formats:
           * console (default)
           * markdown
+
+      You are required to define the following environment variables:
+          * REGRESSOR_DOMAIN
+          * REGRESSOR_API_TOKEN
     EOS
   end
 
@@ -69,6 +73,14 @@ end
 
 if left_tag.blank? && right_tag.blank?
   fail Worker.help_text
+end
+
+missing_envs = %w(REGRESSOR_DOMAIN REGRESSOR_API_TOKEN).select do |name|
+  ENV[name].blank?
+end
+
+if missing_envs.present?
+  fail "Missing environment variables: #{missing_envs.to_sentence}"
 end
 
 Worker.new(left_tag, right_tag, format).work
