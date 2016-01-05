@@ -41,6 +41,7 @@ module RspecRegression
     end
 
     def store
+      return if ENV['NO_REGRESSOR_NO'].present?
       RegressorStore.new(examples).store
     end
 
