@@ -61,7 +61,7 @@ module RspecRegression
   end
 
   class RegressorConsoleShower
-    def initialize(results)
+    def initialize(left_tag, right_tag)
       @results = results
     end
 
@@ -87,7 +87,34 @@ module RspecRegression
 
     private
 
-    attr_reader :results
+    attr_reader :left_tag, :right_tag
+
+    def results
+      @results ||= HTTParty.get regressor_url,
+        query: query_parameters,
+        headers: headers
+    end
+
+    def regressor_domain
+      ENV['REGRESSOR_DOMAIN']
+    end
+
+    def regressor_url
+      "#{regressor_domain}/api/results/compare_latest_of_tags.text"
+    end
+
+    def query_parameters
+      {
+        left_tag: left_tag,
+        right_tag: right_tag,
+      }
+    end
+
+    def headers
+      {
+        'AUTHORIZATION' => "Token token=\"#{regressor_api_token}\"",
+      }
+    end
   end
 
   class RegressorStore
