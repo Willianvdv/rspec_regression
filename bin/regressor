@@ -2,6 +2,7 @@
 
 require 'active_support/all'
 require_relative '../lib/rspec_regression/regressor_console_shower.rb'
+require_relative '../lib/rspec_regression/regressor_markdown_shower.rb'
 
 class Worker
   def self.help_text
@@ -19,6 +20,7 @@ class Worker
       You are required to define the following environment variables:
           * REGRESSOR_DOMAIN
           * REGRESSOR_API_TOKEN
+          * REGRESSOR_PROJECT_ID
     EOS
   end
 
@@ -76,7 +78,11 @@ if left_tag.blank? && right_tag.blank?
   fail Worker.help_text
 end
 
-missing_envs = %w(REGRESSOR_DOMAIN REGRESSOR_API_TOKEN).select do |name|
+missing_envs = [
+  'REGRESSOR_DOMAIN',
+  'REGRESSOR_API_TOKEN',
+  'REGRESSOR_PROJECT_ID',
+].select do |name|
   ENV[name].blank?
 end
 

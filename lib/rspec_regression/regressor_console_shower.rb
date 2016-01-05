@@ -48,6 +48,7 @@ module RspecRegression
       {
         left_tag: left_tag,
         right_tag: right_tag,
+        project_id: project_id
       }
     end
 
@@ -59,6 +60,10 @@ module RspecRegression
 
     def regressor_api_token
       ENV['REGRESSOR_API_TOKEN']
+    end
+
+    def project_id
+      ENV['REGRESSOR_PROJECT_ID']
     end
   end
 end
