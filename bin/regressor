@@ -33,7 +33,7 @@ class Worker
       RspecRegression::RegressorConsoleShower
     when 'markdown'
     else
-      fail class.help_text
+      fail self.class.help_text
     end
   end
 
