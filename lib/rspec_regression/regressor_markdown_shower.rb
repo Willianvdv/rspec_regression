@@ -1,29 +1,13 @@
 require 'httparty'
 
 module RspecRegression
-  class RegressorConsoleShower
+  class RegressorMarkdownShower
     def initialize(left_tag, right_tag)
       @results = results
     end
 
     def show
-      require 'awesome_print'
-      puts "\n\n## THE MIGHTY REGRESSOR"
-
-      unless results['results'].empty?
-        results['results'].each do |result|
-          puts "= Regression detected in: #{result['example_name']} (#{result['example_location']})"
-          result['queries_that_got_added'].each do |query|
-            puts " (+) #{query}"
-          end
-
-          result['queries_that_got_removed'].each do |query|
-            puts " (-) #{query}"
-          end
-        end
-      else
-        print 'No regressions detected, yeeh!'
-      end
+      puts results
     end
 
     private
@@ -41,7 +25,7 @@ module RspecRegression
     end
 
     def regressor_url
-      "#{regressor_domain}/api/results/compare_latest_of_tags.json"
+      "#{regressor_domain}/api/results/compare_latest_of_tags.text"
     end
 
     def query_parameters
