@@ -1,7 +1,5 @@
 #!/usr/bin/env ruby
 
-require 'rspec_regression/query_regressor.rb'
-
 class Worker
   def self.help_text
     <<-EOS
@@ -32,7 +30,7 @@ class Worker
   def shower_class
     case format
     when 'console'
-      RegressorConsoleShower
+      RspecRegression::RegressorConsoleShower
     when 'markdown'
     else
       fail class.help_text
