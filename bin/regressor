@@ -1,5 +1,8 @@
 #!/usr/bin/env ruby
 
+require 'active_support/all'
+require_relative '../lib/rspec_regression/regressor_console_shower.rb'
+
 class Worker
   def self.help_text
     <<-EOS
@@ -38,10 +41,10 @@ class Worker
   end
 
   def shower
-    @shower || shower_class.new left_tag, right_tag
+    @shower || shower_class.new(left_tag, right_tag)
   end
 
-  attr_reader :left_tag, :right_tag
+  attr_reader :left_tag, :right_tag, :format
 end
 
 left_tag = ENV['REGRESSOR_TAG']
@@ -61,6 +64,10 @@ when 1
   end
 when 0
 else
+  fail Worker.help_text
+end
+
+if left_tag.blank? && right_tag.blank?
   fail Worker.help_text
 end
 
