@@ -3,7 +3,8 @@ require 'httparty'
 module RspecRegression
   class RegressorMarkdownShower
     def initialize(left_tag, right_tag)
-      @results = results
+      @left_tag = left_tag
+      @right_tag = right_tag
     end
 
     def show

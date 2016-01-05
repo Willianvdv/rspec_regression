@@ -3,7 +3,8 @@ require 'httparty'
 module RspecRegression
   class RegressorConsoleShower
     def initialize(left_tag, right_tag)
-      @results = results
+      @left_tag = left_tag
+      @right_tag = right_tag
     end
 
     def show
@@ -48,7 +49,7 @@ module RspecRegression
       {
         left_tag: left_tag,
         right_tag: right_tag,
-        project_id: project_id
+        project_id: project_id,
       }
     end
 
