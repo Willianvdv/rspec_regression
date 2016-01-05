@@ -122,7 +122,7 @@ module RspecRegression
     end
 
     def regressor_url
-      "#{regressor_domain}/results"
+      "#{regressor_domain}/api/results"
     end
 
     def regressor_api_token
