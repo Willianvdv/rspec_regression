@@ -1,0 +1,69 @@
+#!/usr/bin/env ruby
+
+require 'rspec_regression/query_regressor.rb'
+
+class Worker
+  def self.help_text
+    <<-EOS
+    Usage:
+      bin/regressor [LEFT_TAG] [RIGHT_TAG] [FORMAT]
+
+      Instead of providing arguments, you can also use the REGRESSOR_TAG
+      and/or REGRESSOR_MASTER_TAG environment variables.
+
+      Possible formats:
+          * console (default)
+          * markdown
+    EOS
+  end
+
+  def initialize(left_tag, right_tag, format)
+    @left_tag = left_tag
+    @right_tag = right_tag
+    @format = format
+  end
+
+  def work
+    shower.show
+  end
+
+  private
+
+  def shower_class
+    case format
+    when 'console'
+      RegressorConsoleShower
+    when 'markdown'
+    else
+      fail class.help_text
+    end
+  end
+
+  def shower
+    @shower || shower_class.new left_tag, right_tag
+  end
+
+  attr_reader :left_tag, :right_tag
+end
+
+left_tag = ENV['REGRESSOR_TAG']
+right_tag = ENV['REGRESSOR_MASTER_TAG']
+format = 'console'
+
+case ARGV.length
+when 3
+  left_tag, right_tag, format = ARGV
+when 2
+  left_tag, right_tag = ARGV
+when 1
+  if ARGV.first == '--help' || ARGV.first == '-h'
+    fail Worker.help_text
+  else
+    left_tag = ARGV.first
+  end
+when 0
+else
+  fail Worker.help_text
+end
+
+Worker.new(left_tag, right_tag, format).work
