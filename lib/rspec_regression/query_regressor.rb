@@ -41,6 +41,7 @@ module RspecRegression
     end
 
     def store
+      return if ENV['NO_REGRESSOR_NO'].present?
       RegressorStore.new(examples).store
     end
 
@@ -65,12 +66,26 @@ module RspecRegression
     end
 
     def store
-      HTTParty.post regressor_url, body: { result_data: examples }
+      HTTParty.post regressor_url, body: body, headers: headers
     end
 
     private
 
     attr_reader :examples
+
+    def body
+      {
+        result_data: examples,
+        project_id: project_id,
+        tag: tag,
+      }
+    end
+
+    def headers
+      {
+        'AUTHORIZATION' => "Token token=\"#{regressor_api_token}\"",
+      }
+    end
 
     def regressor_domain
       ENV.fetch 'REGRESSOR_DOMAIN', 'http://regressor.herokuapp.com'
@@ -81,7 +96,19 @@ module RspecRegression
     end
 
     def regressor_url
-      "#{regressor_domain}/results?project_id=#{regressor_project_id}"
+      "#{regressor_domain}/api/results"
+    end
+
+    def regressor_api_token
+      ENV['REGRESSOR_API_TOKEN']
+    end
+
+    def project_id
+      ENV['REGRESSOR_PROJECT_ID']
+    end
+
+    def tag
+      ENV['REGRESSOR_TAG']
     end
   end
 end
