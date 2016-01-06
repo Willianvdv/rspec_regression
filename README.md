@@ -1,3 +1,6 @@
+[![Circle
+CI](https://circleci.com/gh/Willianvdv/rspec_regression.svg?style=svg)](https://circleci.com/gh/Willianvdv/rspec_regression)
+
 # RspecRegression
 Did your change increased the number of queries?
 
