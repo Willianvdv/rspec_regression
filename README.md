@@ -8,6 +8,11 @@ Install this gem:
 gem 'rspec_regression', github: 'willianvdv/rspec_regression'
 ```
 
+This gem contains executables. Bundler can set up binstubs for you:
+```
+bundle binstub rspec_regression
+```
+
 In your `spec_helper.rb`
 ```
 config.before :suite do

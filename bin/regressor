@@ -1,0 +1,93 @@
+#!/usr/bin/env ruby
+
+require 'active_support/all'
+require_relative '../lib/rspec_regression/regressor_console_shower.rb'
+require_relative '../lib/rspec_regression/regressor_markdown_shower.rb'
+
+class Worker
+  def self.help_text
+    <<-EOS
+    Usage:
+      bin/regressor [LEFT_TAG] [RIGHT_TAG] [FORMAT]
+
+      Instead of providing arguments, you can also use the REGRESSOR_TAG
+      and/or REGRESSOR_MASTER_TAG environment variables.
+
+      Possible formats:
+          * console (default)
+          * markdown
+
+      You are required to define the following environment variables:
+          * REGRESSOR_DOMAIN
+          * REGRESSOR_API_TOKEN
+          * REGRESSOR_PROJECT_ID
+    EOS
+  end
+
+  def initialize(left_tag, right_tag, format)
+    @left_tag = left_tag
+    @right_tag = right_tag
+    @format = format
+  end
+
+  def work
+    shower.show
+  end
+
+  private
+
+  def shower_class
+    case format
+    when 'console'
+      RspecRegression::RegressorConsoleShower
+    when 'markdown'
+      RspecRegression::RegressorMarkdownShower
+    else
+      fail self.class.help_text
+    end
+  end
+
+  def shower
+    @shower || shower_class.new(left_tag, right_tag)
+  end
+
+  attr_reader :left_tag, :right_tag, :format
+end
+
+left_tag = ENV['REGRESSOR_TAG']
+right_tag = ENV['REGRESSOR_MASTER_TAG']
+format = 'console'
+
+case ARGV.length
+when 3
+  left_tag, right_tag, format = ARGV
+when 2
+  left_tag, right_tag = ARGV
+when 1
+  if ARGV.first == '--help' || ARGV.first == '-h'
+    fail Worker.help_text
+  else
+    left_tag = ARGV.first
+  end
+when 0
+else
+  fail Worker.help_text
+end
+
+if left_tag.blank? && right_tag.blank?
+  fail Worker.help_text
+end
+
+missing_envs = [
+  'REGRESSOR_DOMAIN',
+  'REGRESSOR_API_TOKEN',
+  'REGRESSOR_PROJECT_ID',
+].select do |name|
+  ENV[name].blank?
+end
+
+if missing_envs.present?
+  fail "Missing environment variables: #{missing_envs.to_sentence}"
+end
+
+Worker.new(left_tag, right_tag, format).work

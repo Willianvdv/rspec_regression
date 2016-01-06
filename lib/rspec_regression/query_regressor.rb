@@ -41,6 +41,7 @@ module RspecRegression
     end
 
     def store
+      return if ENV['NO_REGRESSOR_NO'].present?
       RegressorStore.new(examples).store
     end
 
@@ -57,36 +58,6 @@ module RspecRegression
 
       @subscribed_to_notifications = true
     end
-  end
-
-  class RegressorConsoleShower
-    def initialize(results)
-      @results = results
-    end
-
-    def show
-      require 'awesome_print'
-      puts "\n\n## THE MIGHTY REGRESSOR"
-
-      unless results['results'].empty?
-        results['results'].each do |result|
-          puts "= Regression detected in: #{result['example_name']} (#{result['example_location']})"
-          result['queries_that_got_added'].each do |query|
-            puts " (+) #{query}"
-          end
-
-          result['queries_that_got_removed'].each do |query|
-            puts " (-) #{query}"
-          end
-        end
-      else
-        print 'No regressions detected, yeeh!'
-      end
-    end
-
-    private
-
-    attr_reader :results
   end
 
   class RegressorStore
@@ -121,7 +92,7 @@ module RspecRegression
     end
 
     def regressor_url
-      "#{regressor_domain}/results"
+      "#{regressor_domain}/api/results"
     end
 
     def regressor_api_token
